@@ -1,12 +1,45 @@
+// Sample data structure for testing when API is unavailable
+const sampleData = [
+    { negeri: "KELANTAN", jumlah_mangsa: "150", nama_pps: "PPS 1" },
+    { negeri: "TERENGGANU", jumlah_mangsa: "200", nama_pps: "PPS 2" },
+    { negeri: "PAHANG", jumlah_mangsa: "175", nama_pps: "PPS 3" },
+    // Add more sample data as needed
+];
+
 // Fetch data from the API
 async function fetchData() {
     try {
-        const response = await fetch('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
+        console.log('Fetching data from API...');
+        
+        // First attempt: Direct API call
+        const response = await fetch('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=', {
+            mode: 'cors',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('Data received:', data);
         return data;
     } catch (error) {
         console.error('Error fetching data:', error);
-        return null;
+        
+        // Display warning message
+        document.querySelector('.dashboard').innerHTML = `
+            <div style="background-color: #fff3cd; color: #856404; padding: 20px; text-align: center; margin-bottom: 20px; border-radius: 4px;">
+                <h2>⚠️ Using Sample Data</h2>
+                <p>Unable to connect to the live API. Displaying sample data for demonstration purposes.</p>
+                <p>Error details: ${error.message}</p>
+            </div>
+        `;
+
+        // Return sample data as fallback
+        return sampleData;
     }
 }
 
