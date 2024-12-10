@@ -6,19 +6,12 @@ const sampleData = [
     // Add more sample data as needed
 ];
 
-// Fetch data from the API
+// Fetch data from the API through our proxy server
 async function fetchData() {
     try {
-        console.log('Fetching data from API...');
+        console.log('Fetching data from proxy server...');
+        const response = await fetch('http://localhost:3000/api/flood-data');
         
-        // First attempt: Direct API call
-        const response = await fetch('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=', {
-            mode: 'cors',
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -29,17 +22,21 @@ async function fetchData() {
     } catch (error) {
         console.error('Error fetching data:', error);
         
-        // Display warning message
+        // Display error message
         document.querySelector('.dashboard').innerHTML = `
-            <div style="background-color: #fff3cd; color: #856404; padding: 20px; text-align: center; margin-bottom: 20px; border-radius: 4px;">
-                <h2>⚠️ Using Sample Data</h2>
-                <p>Unable to connect to the live API. Displaying sample data for demonstration purposes.</p>
+            <div style="background-color: #f8d7da; color: #721c24; padding: 20px; text-align: center; margin-bottom: 20px; border-radius: 4px;">
+                <h2>⚠️ Error Loading Data</h2>
+                <p>Unable to connect to the server. Please make sure the Node.js server is running.</p>
                 <p>Error details: ${error.message}</p>
+                <p>To start the server:</p>
+                <ol style="text-align: left; max-width: 500px; margin: 0 auto;">
+                    <li>Open terminal in the project directory</li>
+                    <li>Run: npm install</li>
+                    <li>Run: npm start</li>
+                </ol>
             </div>
         `;
-
-        // Return sample data as fallback
-        return sampleData;
+        return null;
     }
 }
 
